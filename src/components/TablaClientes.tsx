@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Search, Phone, DollarSign, Hash, User } from 'lucide-react';
 import { Cliente } from '../types';
 import { WhatsAppLink } from './WhatsAppLink';
+import { RAFFLE_CONFIG } from '../config';
 
 interface TablaClientesProps {
   clientes: Cliente[];
@@ -32,6 +33,25 @@ export function TablaClientes({ clientes, preciosPuesto }: TablaClientesProps) {
     
     return coincideNombre;
   });
+
+  const getWhatsAppMessage = (cliente: Cliente) => {
+    if (cliente.totalPendiente > 0) {
+      return RAFFLE_CONFIG.mensajes.pendiente(
+        cliente.nombre,
+        cliente.puestos,
+        RAFFLE_CONFIG.rifa.fechaJuego,
+        RAFFLE_CONFIG.encargado.nequi
+      );
+    } else {
+      return RAFFLE_CONFIG.mensajes.pagado(
+        cliente.nombre,
+        cliente.puestos,
+        RAFFLE_CONFIG.rifa.fechaJuego,
+        RAFFLE_CONFIG.rifa.premio,
+        RAFFLE_CONFIG.rifa.jueganCon
+      );
+    }
+  };
 
   return (
     <div className="p-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
@@ -104,7 +124,7 @@ export function TablaClientes({ clientes, preciosPuesto }: TablaClientesProps) {
                     </div>
                     <WhatsAppLink 
                       phoneNumber={cliente.telefono} 
-                      message={`Hola ${cliente.nombre}, me comunico por los puestos de la rifa.`}
+                      message={getWhatsAppMessage(cliente)}
                       className="shadow-lg hover:shadow-xl"
                     />
                   </div>
