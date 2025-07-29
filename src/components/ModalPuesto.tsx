@@ -69,7 +69,7 @@ export function ModalPuesto({
         <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-t-3xl">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold">Puesto #{puesto.numero}</h2>
+              <h2 className="text-2xl font-bold">Puesto #{puesto.numero.toString().padStart(2, '0')}</h2>
               <p className="text-purple-100">Gestionar información del puesto</p>
             </div>
             <button 

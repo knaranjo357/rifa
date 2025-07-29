@@ -19,7 +19,7 @@ export const RAFFLE_CONFIG = {
     pendiente: (nombre: string, puestos: number[], fecha: string, nequi: string) => 
       `Hola ${nombre}, ¡espero que estés muy bien! 😊\n\n` +
       `Te escribo para recordarte sobre tu participación en la rifa que juega el ${fecha}.\n\n` +
-      `Tienes ${puestos.length} puesto${puestos.length > 1 ? 's' : ''} reservado${puestos.length > 1 ? 's' : ''}: ${puestos.join(', ')}\n\n` +
+      `Tienes ${puestos.length} puesto${puestos.length > 1 ? 's' : ''} reservado${puestos.length > 1 ? 's' : ''}: ${puestos.map(n => n.toString().padStart(2, '0')).join(', ')}\n\n` +
       `Para confirmar tu participación, por favor realiza la consignación de $${(puestos.length * 5000).toLocaleString()} a mi Nequi: ${nequi}\n\n` +
       `¡Muchas gracias por tu confianza! 🙏`,
     
@@ -27,7 +27,7 @@ export const RAFFLE_CONFIG = {
       `¡Hola ${nombre}! 🎉\n\n` +
       `¡Muchas gracias por tu participación en la rifa! Tu pago ha sido confirmado exitosamente.\n\n` +
       `📋 Detalles de tu participación:\n` +
-      `• Puesto${puestos.length > 1 ? 's' : ''}: ${puestos.join(', ')}\n` +
+      `• Puesto${puestos.length > 1 ? 's' : ''}: ${puestos.map(n => n.toString().padStart(2, '0')).join(', ')}\n` +
       `• Fecha del sorteo: ${fecha}\n` +
       `• Premio: ${premio}\n` +
       `• Juega con: ${jueganCon}\n\n` +

@@ -29,7 +29,7 @@ export function PublicGridPuestos({ puestos }: PublicGridPuestosProps) {
               ${getColorPuesto(puesto)}
             `}
           >
-            {puesto.numero}
+            {puesto.numero.toString().padStart(2, '0')}
           </div>
         ))}
       </div>

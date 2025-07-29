@@ -31,7 +31,7 @@ export function AdminApp() {
   const [activeTab, setActiveTab] = useState<'puestos' | 'clientes' | 'estadisticas' | 'data'>('puestos');
   const [modalPuesto, setModalPuesto] = useState<number | null>(null);
 
-  const puestoSeleccionado = modalPuesto !== null ? puestos[modalPuesto - 1] : null;
+  const puestoSeleccionado = modalPuesto !== null ? puestos.find(p => p.numero === modalPuesto) : null;
 
   const handlePuestoClick = (numero: number) => {
     setModalPuesto(numero);

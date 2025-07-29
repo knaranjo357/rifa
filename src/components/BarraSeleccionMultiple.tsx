@@ -90,7 +90,7 @@ export function BarraSeleccionMultiple({
                 <Sparkles className="text-purple-500" size={18} />
               </div>
               <div className="text-sm text-gray-600">
-                Números: {puestosSeleccionados.sort((a, b) => a - b).join(', ')}
+                Números: {puestosSeleccionados.sort((a, b) => a - b).map(n => n.toString().padStart(2, '0')).join(', ')}
               </div>
             </div>
           </div>

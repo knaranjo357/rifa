@@ -6,7 +6,7 @@ import { RAFFLE_CONFIG } from '../config';
 export function useRifa() {
   const [puestos, setPuestos] = useLocalStorage<Puesto[]>('rifa-puestos', 
     Array.from({ length: 100 }, (_, i) => ({
-      numero: i + 1,
+      numero: i,
       estado: 'disponible' as const
     }))
   );

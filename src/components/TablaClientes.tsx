@@ -190,7 +190,7 @@ export function TablaClientes({ clientes, preciosPuesto }: TablaClientesProps) {
                     key={numero} 
                     className="bg-purple-100 text-purple-800 px-3 py-1 rounded-lg text-sm font-semibold"
                   >
-                    {numero}
+                    {numero.toString().padStart(2, '0')}
                   </span>
                 ))}
               </div>

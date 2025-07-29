@@ -48,7 +48,7 @@ export function GridPuestos({
               transform: puestosSeleccionados.includes(puesto.numero) ? 'scale(1.1)' : 'scale(1)',
             }}
           >
-            {puesto.numero}
+            {puesto.numero.toString().padStart(2, '0')}
           </button>
         ))}
       </div>
