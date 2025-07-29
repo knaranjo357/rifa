@@ -17,9 +17,12 @@ export function AdminApp() {
     estadisticas,
     clientes,
     nombresClientes,
+    clientesCompletos,
     puestosSeleccionados,
     modoSeleccion,
     actualizarPuesto,
+    actualizarCliente,
+    marcarClientePagado,
     actualizarPuestosMultiples,
     toggleSeleccionPuesto,
     limpiarSeleccion,
@@ -68,7 +71,12 @@ export function AdminApp() {
       )}
 
       {activeTab === 'clientes' && (
-        <TablaClientes clientes={clientes} preciosPuesto={PRECIO_PUESTO} />
+        <TablaClientes 
+          clientes={clientes} 
+          preciosPuesto={PRECIO_PUESTO}
+          onUpdateCliente={actualizarCliente}
+          onMarcarPagado={marcarClientePagado}
+        />
       )}
       
       {activeTab === 'estadisticas' && (
@@ -89,6 +97,7 @@ export function AdminApp() {
         onClose={() => setModalPuesto(null)}
         onSave={actualizarPuesto}
         nombresClientes={nombresClientes}
+        clientesCompletos={clientesCompletos}
         preciosPuesto={PRECIO_PUESTO}
       />
 
@@ -98,6 +107,7 @@ export function AdminApp() {
         onLimpiarSeleccion={limpiarSeleccion}
         onActualizarMultiples={actualizarPuestosMultiples}
         nombresClientes={nombresClientes}
+        clientesCompletos={clientesCompletos}
       />
       
       <AdminNavigation activeTab={activeTab} onTabChange={setActiveTab} />

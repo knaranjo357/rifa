@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Phone, DollarSign, Hash, User } from 'lucide-react';
+import { Search, Phone, DollarSign, Hash, User, Edit3, CheckCircle, X, Save } from 'lucide-react';
 import { Cliente } from '../types';
 import { WhatsAppLink } from './WhatsAppLink';
 import { RAFFLE_CONFIG } from '../config';
@@ -7,11 +7,16 @@ import { RAFFLE_CONFIG } from '../config';
 interface TablaClientesProps {
   clientes: Cliente[];
   preciosPuesto: number;
+  onUpdateCliente: (nombreAnterior: string, nuevoNombre: string, nuevoTelefono?: string) => void;
+  onMarcarPagado: (nombreCliente: string) => void;
 }
 
-export function TablaClientes({ clientes, preciosPuesto }: TablaClientesProps) {
+export function TablaClientes({ clientes, preciosPuesto, onUpdateCliente, onMarcarPagado }: TablaClientesProps) {
   const [filtro, setFiltro] = useState('');
   const [filtroEstado, setFiltroEstado] = useState<'todos' | 'pendientes' | 'pagados'>('todos');
+  const [editandoCliente, setEditandoCliente] = useState<string | null>(null);
+  const [nombreEditado, setNombreEditado] = useState('');
+  const [telefonoEditado, setTelefonoEditado] = useState('');
 
   const formatearDinero = (cantidad: number) => {
     return new Intl.NumberFormat('es-CO', {
@@ -50,6 +55,33 @@ export function TablaClientes({ clientes, preciosPuesto }: TablaClientesProps) {
         RAFFLE_CONFIG.rifa.premio,
         RAFFLE_CONFIG.rifa.jueganCon
       );
+    }
+  };
+
+  const iniciarEdicion = (cliente: Cliente) => {
+    setEditandoCliente(cliente.nombre);
+    setNombreEditado(cliente.nombre);
+    setTelefonoEditado(cliente.telefono || '');
+  };
+
+  const cancelarEdicion = () => {
+    setEditandoCliente(null);
+    setNombreEditado('');
+    setTelefonoEditado('');
+  };
+
+  const guardarEdicion = (nombreAnterior: string) => {
+    if (nombreEditado.trim() && nombreEditado.trim() !== nombreAnterior) {
+      onUpdateCliente(nombreAnterior, nombreEditado.trim(), telefonoEditado.trim() || undefined);
+    } else if (telefonoEditado !== (clientes.find(c => c.nombre === nombreAnterior)?.telefono || '')) {
+      onUpdateCliente(nombreAnterior, nombreAnterior, telefonoEditado.trim() || undefined);
+    }
+    cancelarEdicion();
+  };
+
+  const handleMarcarPagado = (nombreCliente: string) => {
+    if (confirm(`¿Marcar todos los puestos de ${nombreCliente} como pagados?`)) {
+      onMarcarPagado(nombreCliente);
     }
   };
 
@@ -113,31 +145,102 @@ export function TablaClientes({ clientes, preciosPuesto }: TablaClientesProps) {
       <div className="space-y-4">
         {clientesFiltrados.map((cliente) => (
           <div key={cliente.nombre} className="bg-white rounded-2xl p-6 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02]">
-            <div className="flex justify-between items-start mb-4">
-              <div className="flex-1">
-                <h4 className="text-xl font-bold text-gray-900 mb-2">{cliente.nombre}</h4>
-                {cliente.telefono && (
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <Phone size={16} />
-                      <span className="font-medium">{cliente.telefono}</span>
-                    </div>
-                    <WhatsAppLink 
-                      phoneNumber={cliente.telefono} 
-                      message={getWhatsAppMessage(cliente)}
-                      className="shadow-lg hover:shadow-xl"
+            {editandoCliente === cliente.nombre ? (
+              <div className="space-y-4 mb-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <Edit3 size={20} className="text-purple-600" />
+                  <span className="font-semibold text-gray-800">Editando Cliente</span>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
+                    <input
+                      type="text"
+                      value={nombreEditado}
+                      onChange={(e) => setNombreEditado(e.target.value)}
+                      className="w-full p-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all"
+                      placeholder="Nombre del cliente"
                     />
                   </div>
-                )}
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+                    <input
+                      type="tel"
+                      value={telefonoEditado}
+                      onChange={(e) => setTelefonoEditado(e.target.value)}
+                      className="w-full p-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all"
+                      placeholder="Número de teléfono"
+                    />
+                  </div>
+                </div>
+                
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => guardarEdicion(cliente.nombre)}
+                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+                  >
+                    <Save size={16} />
+                    Guardar
+                  </button>
+                  <button
+                    onClick={cancelarEdicion}
+                    className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-xl font-semibold hover:bg-gray-600 transition-all"
+                  >
+                    <X size={16} />
+                    Cancelar
+                  </button>
+                </div>
               </div>
-              <div className={`px-4 py-2 rounded-full text-sm font-semibold shadow-lg ${
-                cliente.totalPendiente > 0 
-                  ? 'bg-gradient-to-r from-orange-400 to-orange-500 text-white' 
-                  : 'bg-gradient-to-r from-green-400 to-green-500 text-white'
-              }`}>
-                {cliente.totalPendiente > 0 ? 'Pendiente' : 'Pagado'}
+            ) : (
+              <div className="flex justify-between items-start mb-4">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h4 className="text-xl font-bold text-gray-900">{cliente.nombre}</h4>
+                    <button
+                      onClick={() => iniciarEdicion(cliente)}
+                      className="p-1.5 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-all"
+                      title="Editar cliente"
+                    >
+                      <Edit3 size={16} />
+                    </button>
+                  </div>
+                  {cliente.telefono && (
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2 text-gray-600">
+                        <Phone size={16} />
+                        <span className="font-medium">{cliente.telefono}</span>
+                      </div>
+                      <WhatsAppLink 
+                        phoneNumber={cliente.telefono} 
+                        message={getWhatsAppMessage(cliente)}
+                        className="shadow-lg hover:shadow-xl"
+                      />
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center gap-3">
+                  {cliente.totalPendiente > 0 && (
+                    <button
+                      onClick={() => handleMarcarPagado(cliente.nombre)}
+                      className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-semibold hover:shadow-lg transition-all text-sm"
+                      title="Marcar como pagado"
+                    >
+                      <CheckCircle size={16} />
+                      Marcar Pagado
+                    </button>
+                  )}
+                  <div className={`px-4 py-2 rounded-full text-sm font-semibold shadow-lg ${
+                    cliente.totalPendiente > 0 
+                      ? 'bg-gradient-to-r from-orange-400 to-orange-500 text-white' 
+                      : 'bg-gradient-to-r from-green-400 to-green-500 text-white'
+                  }`}>
+                    {cliente.totalPendiente > 0 ? 'Pendiente' : 'Pagado'}
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
             
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4">

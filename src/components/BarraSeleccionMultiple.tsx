@@ -8,6 +8,7 @@ interface BarraSeleccionMultipleProps {
   onLimpiarSeleccion: () => void;
   onActualizarMultiples: (numeros: number[], datos: Partial<Puesto>) => void;
   nombresClientes: string[];
+  clientesCompletos: { nombre: string; telefono?: string }[];
 }
 
 export function BarraSeleccionMultiple({
@@ -15,7 +16,8 @@ export function BarraSeleccionMultiple({
   puestos,
   onLimpiarSeleccion,
   onActualizarMultiples,
-  nombresClientes
+  nombresClientes,
+  clientesCompletos
 }: BarraSeleccionMultipleProps) {
   const [mostrarOpciones, setMostrarOpciones] = useState(false);
   const [cliente, setCliente] = useState('');
@@ -28,6 +30,15 @@ export function BarraSeleccionMultiple({
   const filteredSuggestions = nombresClientes.filter(nombre =>
     nombre.toLowerCase().includes(cliente.toLowerCase()) && nombre !== cliente
   );
+
+  const handleClienteSelect = (nombreSeleccionado: string) => {
+    const clienteCompleto = clientesCompletos.find(c => c.nombre === nombreSeleccionado);
+    setCliente(nombreSeleccionado);
+    if (clienteCompleto?.telefono) {
+      setTelefono(clienteCompleto.telefono);
+    }
+    setShowSuggestions(false);
+  };
 
   function getEstadosDisponibles(puestosData: Puesto[]) {
     const estados = puestosData.map(p => p.estado);
@@ -151,10 +162,7 @@ export function BarraSeleccionMultiple({
                   {filteredSuggestions.map((nombre) => (
                     <button
                       key={nombre}
-                      onClick={() => {
-                        setCliente(nombre);
-                        setShowSuggestions(false);
-                      }}
+                      onClick={() => handleClienteSelect(nombre)}
                       className="w-full text-left p-3 hover:bg-purple-50 transition-colors border-b border-gray-100 last:border-b-0"
                     >
                       {nombre}

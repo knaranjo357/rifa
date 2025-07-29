@@ -9,6 +9,7 @@ interface ModalPuestoProps {
   onClose: () => void;
   onSave: (numero: number, datos: Partial<Puesto>) => void;
   nombresClientes: string[];
+  clientesCompletos: { nombre: string; telefono?: string }[];
   preciosPuesto: number;
 }
 
@@ -18,6 +19,7 @@ export function ModalPuesto({
   onClose, 
   onSave, 
   nombresClientes, 
+  clientesCompletos,
   preciosPuesto 
 }: ModalPuestoProps) {
   const [cliente, setCliente] = useState('');
@@ -36,6 +38,15 @@ export function ModalPuesto({
   const filteredSuggestions = nombresClientes.filter(nombre =>
     nombre.toLowerCase().includes(cliente.toLowerCase()) && nombre !== cliente
   );
+
+  const handleClienteSelect = (nombreSeleccionado: string) => {
+    const clienteCompleto = clientesCompletos.find(c => c.nombre === nombreSeleccionado);
+    setCliente(nombreSeleccionado);
+    if (clienteCompleto?.telefono) {
+      setTelefono(clienteCompleto.telefono);
+    }
+    setShowSuggestions(false);
+  };
 
   const handleSave = () => {
     if (!puesto) return;
@@ -105,10 +116,7 @@ export function ModalPuesto({
                   {filteredSuggestions.map((nombre) => (
                     <button
                       key={nombre}
-                      onClick={() => {
-                        setCliente(nombre);
-                        setShowSuggestions(false);
-                      }}
+                      onClick={() => handleClienteSelect(nombre)}
                       className="w-full text-left p-3 hover:bg-purple-50 transition-colors border-b border-gray-100 last:border-b-0"
                     >
                       {nombre}

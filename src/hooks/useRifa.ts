@@ -68,6 +68,40 @@ export function useRifa() {
     return Array.from(new Set(clientes.map(c => c.nombre))).sort();
   }, [clientes]);
 
+  const clientesCompletos = useMemo(() => {
+    return clientes.map(c => ({ nombre: c.nombre, telefono: c.telefono }));
+  }, [clientes]);
+
+  const actualizarCliente = useCallback((nombreAnterior: string, nuevoNombre: string, nuevoTelefono?: string) => {
+    setPuestos(prevPuestos => 
+      prevPuestos.map(puesto => {
+        if (puesto.cliente === nombreAnterior) {
+          return {
+            ...puesto,
+            cliente: nuevoNombre,
+            telefono: nuevoTelefono
+          };
+        }
+        return puesto;
+      })
+    );
+  }, [setPuestos]);
+
+  const marcarClientePagado = useCallback((nombreCliente: string) => {
+    setPuestos(prevPuestos => 
+      prevPuestos.map(puesto => {
+        if (puesto.cliente === nombreCliente && puesto.estado === 'vendido') {
+          return {
+            ...puesto,
+            estado: 'pagado' as const,
+            fechaPago: new Date().toISOString()
+          };
+        }
+        return puesto;
+      })
+    );
+  }, [setPuestos]);
+
   const actualizarPuesto = useCallback((numero: number, datos: Partial<Puesto>) => {
     setPuestos(prevPuestos => 
       prevPuestos.map(puesto => {
@@ -138,9 +172,12 @@ export function useRifa() {
     estadisticas,
     clientes,
     nombresClientes,
+    clientesCompletos,
     puestosSeleccionados,
     modoSeleccion,
     actualizarPuesto,
+    actualizarCliente,
+    marcarClientePagado,
     actualizarPuestosMultiples,
     toggleSeleccionPuesto,
     limpiarSeleccion,
