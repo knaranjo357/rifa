@@ -9,7 +9,7 @@ export const RAFFLE_CONFIG = {
   // Configuración de la rifa
   rifa: {
     precioPuesto: 5000,
-    fechaJuego: '29 de agosto de 2024',
+    fechaJuego: '22 de agosto de 2024',
     jueganCon: 'las 2 últimas cifras de la Lotería de Santander',
     premio: 'Cafetera'
   },
